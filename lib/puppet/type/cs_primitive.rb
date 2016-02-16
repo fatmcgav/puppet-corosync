@@ -64,7 +64,7 @@ Puppet::Type.newtype(:cs_primitive) do
   end
 
   # Our parameters and operations properties must be hashes.
-  newproperty(:parameters) do
+  newproperty(:parameters, :array_matching => :all) do
     desc "A hash of params for the primitive.  Parameters in a primitive are
       used by the underlying resource agent, each class using them slightly
       differently.  In ocf scripts they are exported and pulled into the
@@ -77,6 +77,28 @@ Puppet::Type.newtype(:cs_primitive) do
     end
 
     defaultto Hash.new
+
+    def insync?(is)
+      # @should is an Array. see lib/puppet/type.rb insync?
+      should = @should.first
+
+      # Comparison of hashes
+      return false unless is.class == Hash and should.class == Hash
+      should.each do |k,v|
+        return false unless is[k] == should[k]
+      end
+      true
+    end
+
+    def should_to_s(newvalue)
+      # Newvalue is an array, but we're only interested in first record.
+      newvalue = newvalue.first
+      newvalue.inspect
+    end
+
+    def is_to_s(currentvalue)
+      currentvalue.inspect
+    end
   end
 
   newproperty(:operations) do
