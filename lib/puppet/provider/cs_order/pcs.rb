@@ -33,7 +33,7 @@ Puppet::Type.type(:cs_order).provide(:pcs, :parent => Puppet::Provider::Pacemake
           first = items['first']
         end
 
-        if items['then-action'] and items['then-action'] != 'start'
+        if items['then-action']
           second = "#{items['then']}:#{items['then-action']}"
         else
           second = items['then']
